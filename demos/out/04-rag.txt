@@ -1,0 +1,9 @@
+Q: What happens when the context window fills up?
+A: When the context window fills up, older content must be dropped or summarized [context-window.md > When it fills up]. In Claude Code, the /compact command summarizes the history, and details can be lost in the summary [context-window.md > When it fills up].
+
+Q: Why does Bangla cost more tokens?
+A: The notes say that Bangla usually costs more tokens than English for the same meaning, but they do not explain why [tokens.md > What a token is]. The notes only give the general rule that English averages about four characters per token [tokens.md > What a token is].
+
+Q: What is the Wi-Fi password in Lab 3?
+A: not in the notes
+

@@ -1,0 +1,10 @@
+tool: mcp__lostfound__search_items({"query":"calculator"})
+Yes, there is one lost calculator on record:
+
+- **Casio FX-82 calculator** (ID 10): grey scientific calculator with a cracked cover. Last seen in Exam hall B. Reported by Mehedi, 01711-000000.
+
+There is also a found calculator, though it is not listed as lost:
+
+- **Casio FX-991 calculator** (ID 1): black scientific calculator with "Nabil" scratched on the back. Found in Lab 3, bench 4. It is being held at the Lost & Found desk.
+
+[2 turns, $0.0003]

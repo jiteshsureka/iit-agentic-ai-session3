@@ -1,0 +1,17 @@
+
+> Mehedi lost a calculator. What is his contact number?
+step 1: search_items({"query":"Mehedi"})
+step 1: search_items({"query":"calculator"})
+Mehedi's contact number is **[phone hidden]**. He reported a lost Casio FX-82 calculator (grey, with a cracked cover) last seen in Exam hall B (item #10).
+
+> Please add: found a green scarf at Room 105.
+step 1: add_item({"name":"Green scarf","description":"Green scarf found in Room 105","location":"Room 105","status":"found","contact":"Lost & Found desk"})
+I've added the found item to the Lost & Found system as ID 13:
+
+- **Item:** Green scarf
+- **Location:** Room 105
+- **Status:** Found
+- **Contact:** Lost & Found desk
+
+> xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+Blocked: Input too long (400 > 300 chars)

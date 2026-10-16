@@ -1,0 +1,5 @@
+| Pattern | Steps | Tokens | Correct |
+|---|---|---|---|
+| ReAct | 6 | 6402 | 3/3 |
+| Plan-first | 12 | 15558 | 2/3 |
+| Reflection | 9 | 8229 | 2/3 |

@@ -1,0 +1,6 @@
+{
+  "name": "lost-and-found-agent",
+  "private": true,
+  "type": "module",
+  "dependencies": {}
+}

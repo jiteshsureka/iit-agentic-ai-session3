@@ -1,0 +1,14 @@
+[
+  {"id": 1, "name": "Casio FX-991 calculator", "description": "Black scientific calculator, name 'Nabil' scratched on the back", "location": "Lab 3, bench 4", "status": "found", "contact": "Lost & Found desk"},
+  {"id": 2, "name": "Blue water bottle", "description": "Steel bottle with a sticker of a Royal Bengal tiger", "location": "Library, second floor", "status": "found", "contact": "Lost & Found desk"},
+  {"id": 3, "name": "Arduino Uno kit", "description": "Clear plastic box with Uno, USB cable and 5 jumper wires", "location": "Room 204", "status": "found", "contact": "Lost & Found desk"},
+  {"id": 4, "name": "Student ID card", "description": "ID card of Tasnim Rahman, batch 22", "location": "Cafeteria entrance", "status": "found", "contact": "Lost & Found desk"},
+  {"id": 5, "name": "Black umbrella", "description": "Large folding umbrella with a wooden handle", "location": "Main gate security desk", "status": "found", "contact": "Lost & Found desk"},
+  {"id": 6, "name": "Red notebook", "description": "Spiral notebook full of Data Structures notes", "location": "Room 301", "status": "found", "contact": "Lost & Found desk"},
+  {"id": 7, "name": "Grey hoodie", "description": "Size L hoodie with a small IIT logo on the chest", "location": "Auditorium, row F", "status": "found", "contact": "Lost & Found desk"},
+  {"id": 8, "name": "AirPods case", "description": "White case, no earbuds inside, a green phone-grip sticker on it", "location": "Bus stop near the east gate", "status": "found", "contact": "Lost & Found desk"},
+  {"id": 9, "name": "Silver USB pendrive", "description": "32 GB Kingston drive on a blue keyring", "location": "Lab 1", "status": "found", "contact": "Lost & Found desk"},
+  {"id": 10, "name": "Casio FX-82 calculator", "description": "Grey scientific calculator with a cracked cover", "location": "Exam hall B", "status": "lost", "contact": "Reported by Mehedi, 01711-000000"},
+  {"id": 11, "name": "Brown leather wallet", "description": "Contains a bus pass and a library card", "location": "Cafeteria", "status": "lost", "contact": "Reported by Sumaiya, 01811-000000"},
+  {"id": 12, "name": "Prescription glasses", "description": "Black round frames in a green case", "location": "Library, ground floor", "status": "found", "contact": "Lost & Found desk"}
+]
