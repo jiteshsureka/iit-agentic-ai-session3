@@ -7,18 +7,18 @@ const fa = require("react-icons/fa");
 const SKILL = "/Users/bs01366/Library/Application Support/Claude/local-agent-mode-sessions/skills-plugin/3ab815c4-6de2-4ef2-9fc4-37a68aba5565/2eb6fc99-7b47-41bd-a735-a88a882fe445/skills/pptx";
 const { applyTheme } = require(`${SKILL}/scripts/apply_theme.js`);
 
-// Ink + amber (a luggage tag): amber dominates the accents, teal for "good", vermilion for "human/danger".
+// Light, high-contrast for weak projectors: white slides, ink text, amber accents, dark teal for "good", red for "human/danger". No dark fills.
 const THEME = {
   name: "Lost and Found",
   headFontFace: "Cambria",
   bodyFontFace: "Calibri",
   colors: {
-    dk1: "16171C", lt1: "FFFFFF", dk2: "2B2D36", lt2: "F1F3F5",
-    accent1: "F4A300", accent2: "1FB5A8", accent3: "E4572E", accent4: "5B6472", accent5: "AAB2C0", accent6: "FFD166",
-    hlink: "1FB5A8", folHlink: "5B6472",
+    dk1: "16171C", lt1: "FFFFFF", dk2: "2B2D36", lt2: "E8ECF1",
+    accent1: "F4A300", accent2: "0B6E66", accent3: "C23B1A", accent4: "404955", accent5: "DDF3F0", accent6: "FFF1CC",
+    hlink: "0B6E66", folHlink: "404955",
   },
 };
-const HEX = { ink: "16171C", amber: "F4A300", teal: "1FB5A8", red: "E4572E", white: "FFFFFF", slate: "5B6472" };
+const HEX = { ink: "16171C", amber: "F4A300", teal: "0B6E66", red: "C23B1A", white: "FFFFFF", slate: "5B6472" };
 
 const pres = new pptxgen();
 pres.layout = "LAYOUT_16x9"; // 10 x 5.625
@@ -33,16 +33,16 @@ const S = pres.shapes;
 // ---------- layouts
 const FOOT = { x: 0.5, y: 5.2, w: 6, h: 0.25, fontSize: 10, color: C.accent4, margin: 0 };
 pres.defineSlideMaster({
-  title: "DARK_TITLE", background: { color: C.text1 },
+  title: "TITLE", background: { color: C.background1 },
   objects: [
-    { placeholder: { options: { name: "title", type: "title", x: 0.7, y: 1.5, w: 5.6, h: 1.7, fontSize: 46, bold: true, color: C.background1, margin: 0, valign: "bottom" }, text: "" } },
-    { placeholder: { options: { name: "body", type: "body", x: 0.7, y: 3.4, w: 5.6, h: 0.9, fontSize: 20, color: C.accent6, margin: 0, valign: "top" }, text: "" } },
+    { placeholder: { options: { name: "title", type: "title", x: 0.7, y: 1.5, w: 5.6, h: 1.7, fontSize: 46, bold: true, color: C.text1, margin: 0, valign: "bottom" }, text: "" } },
+    { placeholder: { options: { name: "body", type: "body", x: 0.7, y: 3.4, w: 5.6, h: 0.9, fontSize: 20, color: C.accent4, margin: 0, valign: "top" }, text: "" } },
   ],
 });
 pres.defineSlideMaster({
-  title: "DARK_SECTION", background: { color: C.text1 },
+  title: "SECTION", background: { color: C.background1 },
   objects: [
-    { placeholder: { options: { name: "title", type: "title", x: 0.7, y: 0.6, w: 8.6, h: 0.9, fontSize: 40, bold: true, color: C.background1, margin: 0, valign: "middle" }, text: "" } },
+    { placeholder: { options: { name: "title", type: "title", x: 0.7, y: 0.6, w: 8.6, h: 0.9, fontSize: 40, bold: true, color: C.text1, margin: 0, valign: "middle" }, text: "" } },
   ],
 });
 pres.defineSlideMaster({
@@ -68,9 +68,10 @@ async function loadIcons(spec) {
 
 const text = (s, t, o) => s.addText(t, { isTextBox: true, margin: 0, ...o });
 const box = (s, o) => s.addShape(S.ROUNDED_RECTANGLE, { rectRadius: 0.08, line: { type: "none" }, ...o });
-const card = (s, name, x, y, w, h, fill = C.background2) => box(s, { objectName: name, x, y, w, h, fill: { color: fill } });
+const card = (s, name, x, y, w, h, fill = C.background2) => box(s, { objectName: name, x, y, w, h, fill: { color: fill }, line: { color: "B8C0CC", width: 0.75 } });
 // icon in a circle
-function badge(s, name, key, x, y, d, fill = C.text1) {
+function badge(s, name, key, x, y, d, fill = C.accent1) {
+  if (key === "plus" || key === "lock") fill = "FBDDD3"; // write/danger tools: pale red circle, red icon
   s.addShape(S.OVAL, { objectName: `${name} circle`, x, y, w: d, h: d, fill: { color: fill }, line: { type: "none" } });
   const p = d * 0.26;
   s.addImage({ objectName: `${name} icon`, data: ICONS[key], x: x + p, y: y + p, w: d - 2 * p, h: d - 2 * p });
@@ -84,18 +85,18 @@ function line(s, x1, y1, x2, y2, o = {}) {
 }
 // code on an ink card; // comment lines in teal
 function code(s, name, src, x, y, w, h, fontSize = 12) {
-  card(s, name, x, y, w, h, C.text1);
+  card(s, name, x, y, w, h);
   const lines = src.split("\n");
-  text(s, lines.map((l, i) => ({ text: l, options: { color: l.trim().startsWith("//") ? C.accent2 : C.background1, breakLine: i < lines.length - 1 } })), {
+  text(s, lines.map((l, i) => ({ text: l, options: { color: l.trim().startsWith("//") ? C.accent2 : C.text1, breakLine: i < lines.length - 1 } })), {
     objectName: `${name} text`, x: x + 0.2, y: y + 0.15, w: w - 0.4, h: h - 0.3, fontFace: "Courier New", fontSize, valign: "top", paraSpaceAfter: 0,
   });
 }
 // LIVE DEMO strip with the command to run
 function demo(s, cmd, y = 4.5) {
-  card(s, "demo strip", 0.5, y, 9, 0.5, C.text1);
+  card(s, "demo strip", 0.5, y, 9, 0.5, C.accent6);
   box(s, { objectName: "demo tag", x: 0.62, y: y + 0.09, w: 1.15, h: 0.32, fill: { color: C.accent1 } });
   text(s, "LIVE DEMO", { x: 0.62, y: y + 0.09, w: 1.15, h: 0.32, fontSize: 11, bold: true, color: C.text1, align: "center", valign: "middle" });
-  text(s, cmd, { objectName: "demo command", x: 1.95, y, w: 7.4, h: 0.5, fontFace: "Courier New", fontSize: 12, color: C.background1, valign: "middle" });
+  text(s, cmd, { objectName: "demo command", x: 1.95, y, w: 7.4, h: 0.5, fontFace: "Courier New", fontSize: 12, bold: true, color: C.text1, valign: "middle" });
 }
 function notes(s, t) { s.addNotes(t); }
 const talk = (title, section) => { const s = pres.addSlide({ masterName: "LIGHT", sectionTitle: section }); s.addText(title, { placeholder: "title" }); return s; };
@@ -103,20 +104,20 @@ const talk = (title, section) => { const s = pres.addSlide({ masterName: "LIGHT"
 // ---------- build
 (async () => {
   await loadIcons({
-    robot: ["FaRobot", HEX.amber], map: ["FaProjectDiagram", HEX.amber], plug: ["FaPlug", HEX.amber], book: ["FaBookOpen", HEX.amber], shield: ["FaShieldAlt", HEX.amber], pie: ["FaChartPie", HEX.amber],
-    robotW: ["FaRobot", HEX.white], search: ["FaSearch", HEX.amber], idcard: ["FaIdCard", HEX.amber], plus: ["FaPlusCircle", HEX.red],
-    sync: ["FaSyncAlt", HEX.amber], list: ["FaListOl", HEX.amber], redo: ["FaRedoAlt", HEX.amber], lock: ["FaLock", HEX.red], check: ["FaCheckCircle", HEX.teal], times: ["FaTimes", HEX.red],
-    cut: ["FaCut", HEX.amber], db: ["FaDatabase", HEX.amber], quote: ["FaQuoteLeft", HEX.amber], bot: ["FaRobot", HEX.amber],
-    filter: ["FaFilter", HEX.amber], valid: ["FaCheckSquare", HEX.amber], user: ["FaUserCheck", HEX.amber], eye: ["FaEyeSlash", HEX.amber],
-    draft: ["FaDraftingCompass", HEX.amber], vial: ["FaVial", HEX.amber], scale: ["FaBalanceScale", HEX.amber], flag: ["FaFlagCheckered", HEX.amber],
+    robot: ["FaRobot", HEX.ink], map: ["FaProjectDiagram", HEX.ink], plug: ["FaPlug", HEX.ink], book: ["FaBookOpen", HEX.ink], shield: ["FaShieldAlt", HEX.ink], pie: ["FaChartPie", HEX.ink],
+    robotW: ["FaRobot", HEX.white], search: ["FaSearch", HEX.ink], idcard: ["FaIdCard", HEX.ink], plus: ["FaPlusCircle", HEX.red],
+    sync: ["FaSyncAlt", HEX.ink], list: ["FaListOl", HEX.ink], redo: ["FaRedoAlt", HEX.ink], lock: ["FaLock", HEX.red], check: ["FaCheckCircle", HEX.teal], times: ["FaTimes", HEX.red],
+    cut: ["FaCut", HEX.ink], db: ["FaDatabase", HEX.ink], quote: ["FaQuoteLeft", HEX.ink], bot: ["FaRobot", HEX.ink],
+    filter: ["FaFilter", HEX.ink], valid: ["FaCheckSquare", HEX.ink], user: ["FaUserCheck", HEX.ink], eye: ["FaEyeSlash", HEX.ink],
+    draft: ["FaDraftingCompass", HEX.ink], vial: ["FaVial", HEX.ink], scale: ["FaBalanceScale", HEX.ink], flag: ["FaFlagCheckered", HEX.ink],
   });
 
   // 1 ── title
-  let s = pres.addSlide({ masterName: "DARK_TITLE", sectionTitle: "Intro" });
+  let s = pres.addSlide({ masterName: "TITLE", sectionTitle: "Intro" });
   s.addText("From Loop to Agent", { placeholder: "title" });
   s.addText("Build, connect and guard a real AI agent", { placeholder: "body" });
-  text(s, "IIT Agentic AI Workshop  |  Day 1, Session 3  |  Jitesh Sureka", { objectName: "byline", x: 0.7, y: 4.85, w: 8, h: 0.3, fontSize: 12, color: C.accent5 });
-  s.addShape(S.OVAL, { objectName: "hero circle", x: 6.9, y: 1.2, w: 2.6, h: 2.6, fill: { color: C.text2 }, line: { type: "none" } });
+  text(s, "IIT Agentic AI Workshop  |  Day 1, Session 3  |  Jitesh Sureka", { objectName: "byline", x: 0.7, y: 4.85, w: 8, h: 0.3, fontSize: 12, color: C.accent4 });
+  s.addShape(S.OVAL, { objectName: "hero circle", x: 6.9, y: 1.2, w: 2.6, h: 2.6, fill: { color: C.accent1 }, line: { type: "none" } });
   s.addImage({ objectName: "hero icon", data: ICONS.robot, x: 7.6, y: 1.9, w: 1.2, h: 1.2 });
   notes(s, "0:00-0:30. Quick hello. Session 1 gave you the loop, Session 2 gave you a coding agent. Today we build our own agent and add six upgrades. Everything runs on one small example.");
 
@@ -140,7 +141,7 @@ const talk = (title, section) => { const s = pres.addSlide({ masterName: "LIGHT"
   [["search", "search_items(query)", "find items by keyword"], ["idcard", "get_item(id)", "read one item"], ["plus", "add_item(...)", "writes to the file"]].forEach(([k, name, desc], i) => {
     const y = 1.4 + i * 0.95;
     card(s, `tool ${i + 1}`, 5.3, y, 4.2, 0.8);
-    badge(s, `tool ${i + 1}`, k, 5.45, y + 0.12, 0.56, C.text1);
+    badge(s, `tool ${i + 1}`, k, 5.45, y + 0.12, 0.56);
     text(s, name, { objectName: `tool ${i + 1} name`, x: 6.15, y: y + 0.1, w: 3.2, h: 0.32, fontFace: "Courier New", fontSize: 14, bold: true, color: C.text1 });
     text(s, desc, { objectName: `tool ${i + 1} desc`, x: 6.15, y: y + 0.44, w: 3.2, h: 0.28, fontSize: 13, color: C.accent4 });
   });
@@ -201,7 +202,7 @@ const talk = (title, section) => { const s = pres.addSlide({ masterName: "LIGHT"
 
   // 7 ── patterns compared
   s = talk("Do the extra calls pay off?", "Agent patterns");
-  const hd = (t) => ({ text: t, options: { bold: true, color: C.background1, fill: { color: C.text1 }, fontSize: 14 } });
+  const hd = (t) => ({ text: t, options: { bold: true, color: C.text1, fill: { color: C.accent1 }, fontSize: 14 } });
   const cell = (t, b) => ({ text: t, options: { fontSize: 14, color: C.text1, bold: !!b, fill: { color: C.background2 } } });
   s.addTable([
     [hd("Pattern"), hd("Extra calls"), hd("Helps with"), hd("Watch out")],
@@ -219,7 +220,7 @@ const talk = (title, section) => { const s = pres.addSlide({ masterName: "LIGHT"
   const ys = [1.95, 2.85, 3.75];
   text(s, "Before: N x M custom glue", { objectName: "before head", x: 0.5, y: 1.3, w: 4.3, h: 0.35, fontSize: 16, bold: true, color: C.text1 });
   text(s, "After: N + M, one protocol", { objectName: "after head", x: 5.2, y: 1.3, w: 4.3, h: 0.35, fontSize: 16, bold: true, color: C.text1 });
-  ys.forEach((ya) => ys.forEach((yb) => line(s, 1.8, ya + 0.25, 3.5, yb + 0.25, { color: C.accent5, width: 1 })));
+  ys.forEach((ya) => ys.forEach((yb) => line(s, 1.8, ya + 0.25, 3.5, yb + 0.25, { color: "8A94A6", width: 1 })));
   ys.forEach((y, i) => {
     box(s, { objectName: `before app ${i}`, x: 0.5, y, w: 1.3, h: 0.5, fill: { color: C.background2 } });
     text(s, apps[i], { x: 0.5, y, w: 1.3, h: 0.5, fontSize: 12, bold: true, color: C.text1, align: "center", valign: "middle" });
@@ -352,8 +353,8 @@ return redactPhones(r.text);`, 0.5, 1.3, 5.6, 2.1, 12);
   s = talk("The 70% rule", "The 70% rule");
   box(s, { objectName: "bar agent", x: 0.5, y: 1.4, w: 6.3, h: 0.8, fill: { color: C.accent1 } });
   text(s, "70%  agent: fast", { x: 0.5, y: 1.4, w: 6.3, h: 0.8, fontSize: 22, bold: true, color: C.text1, align: "center", valign: "middle" });
-  box(s, { objectName: "bar human", x: 6.8, y: 1.4, w: 2.7, h: 0.8, fill: { color: C.text1 } });
-  text(s, "30%  you", { x: 6.8, y: 1.4, w: 2.7, h: 0.8, fontSize: 22, bold: true, color: C.background1, align: "center", valign: "middle" });
+  box(s, { objectName: "bar human", x: 6.8, y: 1.4, w: 2.7, h: 0.8, fill: { color: C.accent5 }, line: { color: "0B6E66", width: 1.5 } });
+  text(s, "30%  you", { x: 6.8, y: 1.4, w: 2.7, h: 0.8, fontSize: 22, bold: true, color: C.text1, align: "center", valign: "middle" });
   card(s, "agent does", 0.5, 2.5, 4.4, 2.3);
   text(s, [{ text: "Agents do this fast", options: { bold: true, fontSize: 17, breakLine: true } }, { text: "Scaffolding and boilerplate", options: { bullet: true, breakLine: true } }, { text: "Happy-path features", options: { bullet: true, breakLine: true } }, { text: "Standard patterns and wiring", options: { bullet: true, breakLine: true } }, { text: "A first draft of tests", options: { bullet: true } }], { objectName: "agent does text", x: 0.7, y: 2.65, w: 4.0, h: 2.0, fontSize: 15, color: C.text1, valign: "top", paraSpaceAfter: 4 });
   card(s, "last thirty", 5.1, 2.5, 4.4, 2.3);
@@ -373,21 +374,23 @@ return redactPhones(r.text);`, 0.5, 1.3, 5.6, 2.1, 12);
   notes(s, "28:30-29:30. Three cards, one example each, all from the thing we just built. Tie to Session 2: this is why we read diffs critically and why tests are the human's job even when the agent writes them.");
 
   // 17 ── recap (dark)
-  s = pres.addSlide({ masterName: "DARK_SECTION", sectionTitle: "The 70% rule" });
+  s = pres.addSlide({ masterName: "SECTION", sectionTitle: "The 70% rule" });
   s.addText("Six upgrades, one agent", { placeholder: "title" });
   ["A loop that calls tools, with a step cap", "Patterns: ReAct, plan first, reflection", "MCP: one plug, tools reused everywhere", "RAG: cited answers, or \"not in the notes\"", "Agent SDK: the loop is no longer yours", "Guardrails in code, and a human on every write"].forEach((t, i) => {
     const col = i % 2, row = Math.floor(i / 2);
     const x = 0.7 + col * 4.4, y = 1.9 + row * 0.95;
     num(s, i + 1, x, y, 0.42);
-    text(s, t, { objectName: `recap ${i + 1}`, x: x + 0.6, y: y - 0.1, w: 3.5, h: 0.62, fontSize: 16, color: C.background1, valign: "middle" });
+    text(s, t, { objectName: `recap ${i + 1}`, x: x + 0.6, y: y - 0.1, w: 3.5, h: 0.62, fontSize: 16, color: C.text1, valign: "middle" });
   });
   notes(s, "29:30-30:00. Read the six lines in ten seconds. Then: 'Your turn. The next slides are your task, step by step. They stay on screen while you work.'");
 
   // ---------- task section
-  s = pres.addSlide({ masterName: "DARK_SECTION", sectionTitle: "Your task" });
+  s = pres.addSlide({ masterName: "SECTION", sectionTitle: "Your task" });
   s.addText("Your turn: build it", { placeholder: "title" });
-  text(s, "7 steps. Each has a \"Done when\" check. Do not move on until it passes.", { objectName: "task intro", x: 0.7, y: 1.9, w: 8.4, h: 0.7, fontSize: 20, color: C.accent6 });
-  text(s, "Short on time? Skip Step 4 and Step 6 first.\nFull handout: handout/student-task.md", { objectName: "task hint", x: 0.7, y: 3.0, w: 8.4, h: 0.9, fontSize: 16, color: C.accent5 });
+  text(s, "7 steps. Each has a \"Done when\" check. Do not move on until it passes.", { objectName: "task intro", x: 0.7, y: 1.9, w: 6.2, h: 0.7, fontSize: 20, bold: true, color: C.text1 });
+  text(s, "Short on time? Skip Step 4 and Step 6 first.\nFull handout: handout/student-task.md", { objectName: "task hint", x: 0.7, y: 3.0, w: 6.2, h: 0.9, fontSize: 16, color: C.accent4 });
+  s.addShape(S.OVAL, { objectName: "divider circle", x: 7.4, y: 1.9, w: 1.9, h: 1.9, fill: { color: C.accent1 }, line: { type: "none" } });
+  s.addImage({ objectName: "divider icon", data: ICONS.flag, x: 7.9, y: 2.4, w: 0.9, h: 0.9 });
   notes(s, "Hands-on starts here. Leave the setup slide up first, then move through the steps as the room progresses.");
 
   // T1 setup
@@ -415,10 +418,10 @@ export ANTHROPIC_API_KEY=<from instructor>`, 0.5, 1.3, 5.6, 2.6, 12);
       num(st, i + 1, 0.75, y + 0.05, 0.34);
       text(st, t, { objectName: `do item ${i + 1}`, x: 1.3, y, w: 4.7, h: 3.0 / items.length - 0.05, fontSize: 14, color: C.text1, valign: "middle" });
     });
-    card(st, "done card", 6.4, 1.3, 3.1, 3.65, C.text1);
+    card(st, "done card", 6.4, 1.3, 3.1, 3.65, C.accent5);
     st.addImage({ objectName: "done icon", data: ICONS.check, x: 6.65, y: 1.5, w: 0.4, h: 0.4 });
     text(st, "DONE WHEN", { objectName: "done label", x: 7.2, y: 1.5, w: 2.1, h: 0.4, fontSize: 13, bold: true, color: C.accent2, valign: "middle" });
-    text(st, done, { objectName: "done text", x: 6.65, y: 2.1, w: 2.65, h: 2.7, fontSize: 14, color: C.background1, valign: "top", paraSpaceAfter: 6 });
+    text(st, done, { objectName: "done text", x: 6.65, y: 2.1, w: 2.65, h: 2.7, fontSize: 14, color: C.text1, valign: "top", paraSpaceAfter: 6 });
     return st;
   };
 
@@ -457,7 +460,7 @@ export ANTHROPIC_API_KEY=<from instructor>`, 0.5, 1.3, 5.6, 2.6, 12);
     "Index sections with minisearch (heading, text). Drop stop words like \"the\", \"of\"",
     "Send the top 3 sections to the model: answer only from sources, cite [file > heading]",
     "No search hits? Answer \"not in the notes\" without calling the model",
-  ], [{ text: "Context window question: answered, cites context-window.md.", options: { breakLine: true } }, { text: "\"Wi-Fi password in Lab 3?\" gets exactly:", options: { breakLine: true } }, { text: "not in the notes", options: { bold: true, color: C.accent6 } }]);
+  ], [{ text: "Context window question: answered, cites context-window.md.", options: { breakLine: true } }, { text: "\"Wi-Fi password in Lab 3?\" gets exactly:", options: { breakLine: true } }, { text: "not in the notes", options: { bold: true } }]);
 
   step("Step 6: Agent SDK (15 min)", [
     "Rebuild the agent with query() from @anthropic-ai/claude-agent-sdk",
@@ -475,17 +478,17 @@ export ANTHROPIC_API_KEY=<from instructor>`, 0.5, 1.3, 5.6, 2.6, 12);
     [cell("3"), cell("Approval", 1), cell("Ask y/n before add_item writes. Anything but y means no write")],
     [cell("4"), cell("Output", 1), cell("Replace phone numbers like 01711-000000 with [phone hidden]")],
   ], { objectName: "guardrail table", x: 0.5, y: 1.3, w: 5.7, colW: [0.4, 1.2, 4.1], rowH: [0.4, 0.8, 0.8, 0.8, 0.8], border: { type: "solid", pt: 1, color: "FFFFFF" }, valign: "middle", margin: [0.05, 0.1, 0.05, 0.1] });
-  card(s, "done card", 6.4, 1.3, 3.1, 3.65, C.text1);
+  card(s, "done card", 6.4, 1.3, 3.1, 3.65, C.accent5);
   s.addImage({ objectName: "done icon", data: ICONS.check, x: 6.65, y: 1.5, w: 0.4, h: 0.4 });
   text(s, "DONE WHEN", { objectName: "done label", x: 7.2, y: 1.5, w: 2.1, h: 0.4, fontSize: 13, bold: true, color: C.accent2, valign: "middle" });
-  text(s, [{ text: "A 400-character task is blocked.", options: { breakLine: true } }, { text: "\"Add: found a green scarf at Room 105\" asks y/n. Answer n and items.json is unchanged.", options: { breakLine: true } }, { text: "Mehedi's contact number is never shown.", options: {} }], { objectName: "done text", x: 6.65, y: 2.1, w: 2.65, h: 2.7, fontSize: 14, color: C.background1, valign: "top", paraSpaceAfter: 6 });
+  text(s, [{ text: "A 400-character task is blocked.", options: { breakLine: true } }, { text: "\"Add: found a green scarf at Room 105\" asks y/n. Answer n and items.json is unchanged.", options: { breakLine: true } }, { text: "Mehedi's contact number is never shown.", options: {} }], { objectName: "done text", x: 6.65, y: 2.1, w: 2.65, h: 2.7, fontSize: 14, color: C.text1, valign: "top", paraSpaceAfter: 6 });
 
   // T-last: stretch + hand in
   s = talk("Stretch goals and hand in", "Your task");
   card(s, "stretch card", 0.5, 1.3, 4.4, 3.5);
   text(s, [{ text: "Stretch goals", options: { bold: true, fontSize: 18, breakLine: true } }, { text: "Break your own guardrails two ways, then fix one", options: { bullet: true, breakLine: true } }, { text: "Add mark_claimed(id) behind an approval", options: { bullet: true, breakLine: true } }, { text: "Ask a clarifying question when search finds nothing", options: { bullet: true, breakLine: true } }, { text: "Print the cost of each run", options: { bullet: true } }], { objectName: "stretch text", x: 0.7, y: 1.45, w: 4.0, h: 3.2, fontSize: 15, color: C.text1, valign: "top", paraSpaceAfter: 6 });
-  card(s, "handin card", 5.1, 1.3, 4.4, 3.5, C.text1);
-  text(s, [{ text: "Show the instructor", options: { bold: true, fontSize: 18, color: C.accent6, breakLine: true } }, { text: "Your Step 2 results table", options: { bullet: true, breakLine: true } }, { text: "A screenshot of Claude Code calling your MCP tool", options: { bullet: true, breakLine: true } }, { text: "Your Step 4 list, with the circled item", options: { bullet: true } }], { objectName: "handin text", x: 5.3, y: 1.45, w: 4.0, h: 3.2, fontSize: 15, color: C.background1, valign: "top", paraSpaceAfter: 6 });
+  card(s, "handin card", 5.1, 1.3, 4.4, 3.5, C.accent5);
+  text(s, [{ text: "Show the instructor", options: { bold: true, fontSize: 18, breakLine: true } }, { text: "Your Step 2 results table", options: { bullet: true, breakLine: true } }, { text: "A screenshot of Claude Code calling your MCP tool", options: { bullet: true, breakLine: true } }, { text: "Your Step 4 list, with the circled item", options: { bullet: true } }], { objectName: "handin text", x: 5.3, y: 1.45, w: 4.0, h: 3.2, fontSize: 15, color: C.text1, valign: "top", paraSpaceAfter: 6 });
 
   await pres.writeFile({ fileName: "session3.pptx" });
   await applyTheme("session3.pptx", THEME);
